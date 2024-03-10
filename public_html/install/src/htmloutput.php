@@ -40,6 +40,10 @@ public function getName() {
     return $this->config['name'];    
     }
 
+ public function getDatabase() {
+    return $this->config['database'];    
+    }
+
 public function getTitle() {
     return $this->config['title'];       
     }

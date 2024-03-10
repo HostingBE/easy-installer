@@ -13,6 +13,17 @@ steps:
   - name: admin gegevens
     step: 5
 phpversion: 8.1
+database:
+  - field: hostname
+    required: true
+  - field: username
+    required: true
+  - field: password
+    required: true
+  - field: database
+    required: true
+  - field: port
+    required: true
 sqlfile: /install/database.sql
 modules:
   - name: mysqld
