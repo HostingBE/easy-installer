@@ -1,0 +1,35 @@
+---
+title: install script by HostingBE
+name: simple-cms by HostingBE
+steps:
+  - name: terms and conditions
+    step: 1
+  - name: database settings
+    step: 2
+  - name: version checks
+    step: 3
+  - name: file permissions
+    step: 4        
+  - name: admin gegevens
+    step: 5
+phpversion: 8.1
+sqlfile: /install/database.sql
+modules:
+  - name: mysqld
+  - name: zip
+  - name: ldap
+directories:
+  - name: tmp
+    chmod: 755
+    type: directory
+  - name: data
+    chmod: 755
+    type: directory   
+  - name: config.php
+    chmod: 644
+    type: file
+conditions: |
+  Hier komen de algemene voorwaarden welke getoond moeten worden op de website en natuurlijk geaccodeert worden.
+  De tweede regel is ook van belang anders zien we niet wat er moet gebeuren. Selecteer de checkbox als je akkoord
+  gaat met deze voorwaarden!.
+  Hier komt nog meer text!
