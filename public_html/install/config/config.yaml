@@ -14,31 +14,35 @@ steps:
     step: 5
 phpversion: 8.1
 database:
-  - field: hostname
-    required: true
-  - field: username
-    required: true
-  - field: password
-    required: true
-  - field: database
-    required: true
-  - field: port
-    required: true
+  title: database settings
+  settings:
+    - name: hostname
+      required: true
+    - name: username
+      required: true
+    - name: password
+      required: true
+    - name: database
+      required: true
+    - name: port
+      required: true
 sqlfile: /install/database.sql
 modules:
   - name: mysqld
   - name: zip
   - name: ldap
 directories:
-  - name: tmp
-    chmod: 755
-    type: directory
-  - name: data
-    chmod: 755
-    type: directory   
-  - name: config.php
-    chmod: 644
-    type: file
+  title: directory settings
+  settings:
+    - name: tmp
+      chmod: 755
+      type: directory
+    - name: data
+      chmod: 755
+      type: directory   
+    - name: config.php
+      chmod: 644
+      type: file
 conditions: |
   Hier komen de algemene voorwaarden welke getoond moeten worden op de website en natuurlijk geaccodeert worden.
   De tweede regel is ook van belang anders zien we niet wat er moet gebeuren. Selecteer de checkbox als je akkoord

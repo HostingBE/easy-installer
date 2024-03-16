@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * @author Constan van Suchtelen van de Haere <constan@hostingbe.com>
+ * @copyright 2024 HostingBE
+ */
 
 require __DIR__ . '/assets/vendor/autoload.php';
 require __DIR__ . '/src/htmloutput.php';
@@ -18,15 +22,61 @@ if ($_SERVER['REQUEST_METHOD'] == "GET") {
         } 
  
     }
+
 if ($_SERVER['REQUEST_METHOD'] == "POST") {
-    $method = "post";
+    $method = $_SERVER['REQUEST_METHOD'];
+    $body = json_decode(file_get_contents('php://input'));
+    $step = $body->step; 
     }
 
     $stepkey = array_search($step, array_column($steps,'step'));
 
+
+if ($method == 'POST') {
+
+/*
+* check if user aggrees on our terms and conditions
+*/
+if ($steps[$stepkey]['name'] == "terms and conditions") {
+ 
+ 
+    if ($body->data->agree == 'true') {
+    print json_encode(['status' => 'success','message' => 'thank you !']);  
+    exit;
+      }
+      if ($body->data->agree != 'true') { 
+    print json_encode(['status' => 'error','message' => 'You need to agree to the terms and conditions! ' ]);  
+    exit;
+    }
+}
+
+/*
+* check the database settings and check connection with these settings
+*/
+if ($steps[$stepkey]['name'] == "database settings") { 
+    foreach ($html->getDatabase() as $field) {
+        if (($body->data->{$field['name']} == "") && ($field['required'] == 1)) {
+            print json_encode(['status' => 'error','message' => "Database field {$field['name']} is required!"]);  
+            exit;    
+        }         
+    }
+    
+    
+    print json_encode(['status' => 'success','message' => "Database settings succesfully saved !"]); 
+    exit;
+}
+
+
+
+
+
+    print json_encode(['status' => 'error','message' => 'You have reached the end of the internet!' ]);
+}
+
+
 if ($method == 'GET') {
 
-    if ($step == "admin") {
+if ($step == "admin") {
     echo $twig->render('admin.twig', ['title' => $html->getTitle(),'menu' => $html->getMenu() ]);
     }
 

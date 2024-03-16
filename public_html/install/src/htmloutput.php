@@ -11,7 +11,7 @@ class HtmlOutput {
 
 public function __construct() {
     $this->config = $this->getConfig();
-    }
+}
 
 
 private function getConfig($yamlfile = __DIR__ . '/../config/config.yaml') {
@@ -41,7 +41,7 @@ public function getName() {
     }
 
  public function getDatabase() {
-    return $this->config['database'];    
+    return $this->config['database']['settings'];    
     }
 
 public function getTitle() {

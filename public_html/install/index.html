@@ -1,4 +1,8 @@
-﻿
+﻿/**
+ * @author Constan van Suchtelen van de Haere <constan@hostingbe.com>
+ * @copyright 2023 HostingBE
+ */
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,7 +11,8 @@
     <title>MultiStep install form</title>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
     <script defer src="https://unpkg.com/alpinejs@latest/dist/cdn.min.js"></script>
-</head>
+    <script src="https://cdn.jsdelivr.net/gh/mattkingshott/iodine@3/dist/iodine.min.js" defer></script>
+  </head>
 <body class="bg-black">
     
 
@@ -28,34 +33,57 @@
 
     formStep: 1,
     message: [],
+    data: {},
     conditions: { title: null, name: null, conditions: null },
-    database: { title: null, field: null, database: [] },
-    agree: false,
+    database: { title: null, field: null, database: [] }, 
+
+    next() {
+      let array = [...document.forms].map(form => {
+        let data = new FormData(form);
+        let obj = {};
+        [...data.entries()].forEach(entry => obj[entry[0]] = entry[1]);
+        return obj;
+      });
+    return array[0];
+    },
 
     submitData() {
+ 
+
       fetch('/install/install.php', {
               method: 'POST',
               body: JSON.stringify({ 
               title: 'title',
-              step: this.formStep
+              data: this.next(),
+              step: this.formStep - 1
               }),
               headers: {
               'Content-type': 'application/json; charset=UTF-8',
               },     
                 })
-              .then((result) => {
-                if (result.status == 200) {
-                  this.message = { status: 'success', message: 'the command completed successfully!' }
-                }
-                if (result.status != 200) {
-                  this.message = { status: 'error', message: `an error occured code ${result.status} ${result.statusText}!` }
-                }
+                .then(function(response) {
+                  if (response.status == '200') {
+                    return response.json();
+                  }
+                  if (response.status != 200) {
+                    return this.message = { status: 'error', message: `an error occured code ${result.status} ${result.statusText}!` }
+                    }
+                })
+                .then((result) => {
+                     console.log('log' + JSON.stringify(result));
+                     if (result.status != 'success') {
+                      this.formStep = this.formStep - 1;
+                      this.message = { status: 'error', message: result.message  }
+                     }
+                     if (result.status == 'success') {
+                      this.message = { status: 'success', message: result.message }
+                    }
               })
              .catch((error) => {
              this.message = { status: 'error', message: `an error occured! ${error}` }     
             });
             }
-}" class="py-2" x-on:submit.prevent="submitData">  
+}" class="py-2" x-on:submit.prevent="submitData()">  
 
 <div class="progress my-2">
   <div class="progress-bar bg-success" role="progressbar" x-bind:style="`width: ${formStep * 20}%;`" x-bind:aria-valuenow="`${formStep * 20}`" aria-valuemin="0" aria-valuemax="100" x-text="`${formStep * 20}%`"></div>
@@ -92,9 +120,9 @@
   <p x-text="conditions.conditions"></p>
 
   <div class="form-check">
-    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
-    <label class="form-check-label" for="flexCheckDefault">
-      Default checkbox
+    <input class="form-check-input" type="checkbox" name="agree" value="true" id="terms"  data-rules='["required"]'> 
+    <label class="form-check-label" for="terms">
+      I agree with the terms and conditions above
     </label>
   </div>
 </div>
@@ -109,12 +137,12 @@
   field: data.field,
   database: data.content,
 })"
-  ><h4 x-text="database.name"></h4>
+  ><h4 x-text="database.title"></h4>
 <template x-for="item in database.database">
 <div class="row p-2">
-  <label x-text="item.field" class="col-4"></label>
+  <label x-text="item.name" class="col-4" for="item.name"></label>
   <div class="col-8">  
-  <input type="text" x-bind:name="item.field" x-modal="item.field" class="form-control">
+  <input type="text" x-bind:name="item.name" x-bind:placeholder="item.name" class="form-control" x-bind:id="item.name">
 </div>
 </div>
 </template>
@@ -132,11 +160,11 @@
       </button>
     </div>
     <div class="col-6">
-  <button x-cloak x-show="formStep < 5" x-on:click="formStep += 1" type="submit" class="btn btn-primary float-right">
+  <button x-cloak x-show="formStep < 5" x-on:click="formStep += 1" type="submit" class="btn btn-primary float-end">
     Next Step
   </button>
 
-  <button x-cloak x-show="formStep === 5" type="submit" class="btn btn-success float-right">Submit</button>
+  <button x-cloak x-show="formStep === 5" type="submit" class="btn btn-success float-end">Submit</button>
 </div>
 </div>
 </div>
