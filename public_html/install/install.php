@@ -90,8 +90,9 @@ if ($steps[$stepkey]['name'] == "database settings") {
 if ($steps[$stepkey]['name'] == "terms and conditions") {
     print json_encode(['title' => $html->getTitle(),'name' => $html->getName(), 'content' => $html->getConditions() ]);
     }
-if ($step == "permissions") {
-    echo $twig->render('permissions.twig', ['title' => $html->getTitle(),'menu' => $html->getMenu(),'name' => $html->getName(),'directories' => $html->getDirectories()]);
+
+if ($steps[$stepkey]['name'] == "file permissions") {
+    print json_encode(['title' => $html->getTitle(),'name' => $html->getName(), 'content' => $html->getDirectories() ]);
     }
        
 if (!$step) {

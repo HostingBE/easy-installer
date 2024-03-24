@@ -36,6 +36,7 @@
     data: {},
     conditions: { title: null, name: null, conditions: null },
     database: { title: null, field: null, database: [] }, 
+    directories: { title: null, field: null, directories: [] }, 
 
     next() {
       let array = [...document.forms].map(form => {
@@ -147,7 +148,37 @@
 </div>
 </template>
 </div>
-  <div x-cloak x-show="formStep === 3"><h4>Directory permissions</h4></div>
+  <div x-cloak x-show="formStep === 3" 
+  x-init="fetch('/install/install.php?step=4')
+  .then(response=> {
+    if (!response.ok) console.log(`Something went wrong: ${response.status} - ${response.statusText}`)
+    return response.json()
+})
+.then(data => directories = {
+  title: data.title,
+  field: data.field,
+  directories: data.content,
+})"
+  ><h4 x-text="directories.title"></h4>
+
+ <table class="table w-100">
+  <thead>
+    <tr>
+      <th>name</th>
+      <th>type</th>
+      <th>chmod</th>
+    </tr>
+  </thead>
+  <tbody>
+<template x-for="item in directories.directories">
+  <tr>
+  <td x-text="item.name"></td><td x-text="item.type"></td><td x-text="item.chmod" x-bind:class="{'bg-danger text-white fw-bolder': ! item.permission_check}" class="text-end"></td>
+  </tr>
+    </template>
+  </tbody> 
+  </table>
+  
+  </div>
   <div x-cloak x-show="formStep === 4"><h4>Database settings</h4></div>
   <div x-cloak x-show="formStep === 5"><h4>Install package</h4></div>
 </div>

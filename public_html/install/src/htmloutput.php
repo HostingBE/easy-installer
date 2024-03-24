@@ -53,7 +53,17 @@ public function getModules() {
     }
 
 public function getDirectories() {
-    return $this->config['directories'];       
+
+    $dir = $this->config['directories']['settings'];
+    foreach ($dir as $key => $val) {
+        $dir[$key]['dircheck'] = $this->checkDirectoryOrFile(__DIR__.'/../../../'.$val['name']);
+        $dir[$key]['permissions'] = $this->checkPermissions(__DIR__.'/../../../'.$val['name']); 
+        $dir[$key]['permission_check'] = false;
+        if ($dir[$key]['permissions'] == $val['chmod']) {
+            $dir[$key]['permission_check'] = true;
+            }
+        }
+    return $dir;       
     }
 
 public function getConditions() {
@@ -69,5 +79,18 @@ public function getSteps() {
     array_multisort($sort, SORT_ASC, $this->config['menu']);
     return $this->config['menu'];
     } */
+
+private function checkPermissions($directory) {
+      return substr(decoct(fileperms($directory)), -3);
+      }
+
+private function checkDirectoryOrFile($directory) {
+    
+    if (is_dir($directory)) {
+    return true;
+    } else {
+    return false;
+    }
+  }
 }
 ?>
