@@ -6,10 +6,10 @@ steps:
     step: 1
   - name: database settings
     step: 2
-  - name: version checks
-    step: 4
   - name: file permissions
     step: 3        
+  - name: version checks
+    step: 4
   - name: admin gegevens
     step: 5
 phpversion: 8.1
