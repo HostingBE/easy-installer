@@ -56,7 +56,12 @@ public function getDirectories() {
 
     $dir = $this->config['directories']['settings'];
     foreach ($dir as $key => $val) {
-        $dir[$key]['dircheck'] = $this->checkDirectoryOrFile(__DIR__.'/../../../'.$val['name']);
+        if ($val['type'] == 'file') {
+        $dir[$key]['dircheck'] = $this->checkFile(__DIR__.'/../../../'.$val['name']);
+        }
+        if ($val['type'] == 'dir') {
+        $dir[$key]['dircheck'] = $this->checkDirectory(__DIR__.'/../../../'.$val['name']);
+        }
         $dir[$key]['permissions'] = $this->checkPermissions(__DIR__.'/../../../'.$val['name']); 
         $dir[$key]['permission_check'] = false;
         if ($dir[$key]['permissions'] == $val['chmod']) {
@@ -84,7 +89,16 @@ private function checkPermissions($directory) {
       return substr(decoct(fileperms($directory)), -3);
       }
 
-private function checkDirectoryOrFile($directory) {
+private function checkFile($file) {
+    
+        if (is_file($file)) {
+        return true;
+        } else {
+        return false;
+        }
+      }
+
+private function checkDirectory($directory) {
     
     if (is_dir($directory)) {
     return true;

@@ -60,16 +60,28 @@ if ($steps[$stepkey]['name'] == "database settings") {
             exit;    
         }         
     }
-    
-    
     print json_encode(['status' => 'success','message' => "Database settings succesfully saved !"]); 
     exit;
 }
+/*
+* check directory and file permissions
+*/
+if ($steps[$stepkey]['name'] == "file permissions") {
+ 
+foreach ($html->getDirectories() as $dir) {
 
+    if ($dir['dircheck'] === false) {
+    print json_encode(['status' => 'error','message' => "File or directory {$dir['name']} does not exist!"]);  
+    exit;
+      }
+      if ($dir['permission_check'] === false) {
+        print json_encode(['status' => 'error','message' => "Permissions file or directory {$dir['name']} are not correct!"]);  
+        exit;
+          }      
+            }
 
-
-
-
+}
+    
     print json_encode(['status' => 'error','message' => 'You have reached the end of the internet!' ]);
 }
 
